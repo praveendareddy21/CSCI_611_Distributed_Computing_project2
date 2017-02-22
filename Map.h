@@ -23,6 +23,11 @@ class Map {
     const unsigned char* mapmem;
     int mapHeight;
     int mapWidth;
+    int noticeCount;
+    int drawMapCount;
+    char * map;
+    int rows;
+    int cols;
 };
 
 #endif //MAP_H

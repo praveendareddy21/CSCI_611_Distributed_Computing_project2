@@ -16,16 +16,29 @@
 Map::Map(const unsigned char* mmem, int ylength, int xwidth)
   : mapHeight(ylength), mapWidth(xwidth), mapmem(mmem), theMap(ylength, xwidth)
 {
-  drawMap();
+	/*
+	write(1, &rows, sizeof(int));
+	  write(1, &cols, sizeof(int));
+	  write(1, mapptr, rows*cols);
+	 */
 }
 
 int Map::getKey()
 {
-  return theMap.getKey();
+	/*
+	write(1, &drawmaps, sizeof(int));
+	  write(1, &postnotices, sizeof(int));
+	  write(1, mapptr, rows*cols);
+	  char xyz;
+	  read(0, &xyz, sizeof(char));
+	  return xyz;
+	 */
+	return 106;
 }
 void Map::postNotice(const char* msg)
 {
-  theMap.notice(msg);
+  // write(1, &postnotices, sizeof(int));
+
 }
 
 //Calculate offset into memory array
