@@ -36,7 +36,9 @@ int main(){
 	 unsigned char  map_mem[5] = "****";
 	 Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,2);
 
-	 std::cout<<"out in main";
+	 //commenting out as goldchase should not use standard output
+	 //std::cout<<"out in main";
+
 
 
 	return 0;
