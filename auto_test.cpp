@@ -60,7 +60,11 @@ int main(){
 		close(c2p[C2P_WRITE_END]);
 
 		//cin>>msg;
-		write(p2c[P2C_WRITE_END],"hello\0",6);
+		write(p2c[P2C_WRITE_END],"j",1);
+
+		char msg2[6];
+		read(c2p[C2P_READ_END],msg2,1);
+		cout<<"message read in parent as : "<<msg2[0];
 
 
 
@@ -74,10 +78,20 @@ int main(){
 		close(p2c[P2C_WRITE_END]);
 		close(c2p[C2P_READ_END]);
 
-		char msg2[6];
+		dup2(p2c[P2C_READ_END], 0);
+		close(p2c[P2C_READ_END]);
 
-		read(p2c[P2C_READ_END],msg2,6);
-		cout<<"message read in child as : "<<msg2;
+
+
+		dup2(c2p[C2P_WRITE_END], 1);
+		close(c2p[C2P_WRITE_END]);
+
+		execl("stub","",NULL);
+
+		//char msg2[6];
+
+		//read(p2c[P2C_READ_END],msg2,6);
+		///cout<<"message read in child as : "<<msg2;
 
 	}
 
