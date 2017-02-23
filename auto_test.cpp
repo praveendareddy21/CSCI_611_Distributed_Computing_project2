@@ -48,6 +48,7 @@ int main(){
 
 	pipe(p2c);
 	pipe(c2p);
+	int rows, cols;
 
 	parent_pid = getpid();
 
@@ -60,11 +61,19 @@ int main(){
 		close(c2p[C2P_WRITE_END]);
 
 		//cin>>msg;
-		write(p2c[P2C_WRITE_END],"j",1);
+		//write(p2c[P2C_WRITE_END],"j",1);
 
-		char msg2[6];
-		read(c2p[C2P_READ_END],msg2,1);
-		cout<<"message read in parent as : "<<msg2[0];
+		//char msg2[6];
+		read(c2p[C2P_READ_END],&rows, sizeof(int));
+		read(c2p[C2P_READ_END],&cols,sizeof(int));
+		char map [rows* cols +1 ];
+		read(c2p[C2P_READ_END],map,rows*cols);
+		cout<<"r "<<rows<<"c "<<cols<<endl;
+		cout<<"map "<<map<<endl;
+
+
+
+		//cout<<"message read in parent as : "<<msg2[0];
 
 
 
@@ -88,19 +97,9 @@ int main(){
 
 		execl("stub","",NULL);
 
-		//char msg2[6];
 
-		//read(p2c[P2C_READ_END],msg2,6);
-		///cout<<"message read in child as : "<<msg2;
 
 	}
-
-
-
-
-
-
-
 
 
 	if(getpid() == child_pid)

@@ -35,11 +35,11 @@ using namespace std;
 
 int main(){
 
-	 //unsigned char  map_mem[5] = "****";
-	 //Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,2);
-	char a;
-	cin>>a;
-	cout<<a;
+	 unsigned char  map_mem[5] = "****";
+	 Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,2);
+	//char a;
+	//cin>>a;
+	//cout<<a;
 
 	 //commenting out as goldchase should not use standard output
 	 //std::cout<<"out in main";
@@ -48,5 +48,3 @@ int main(){
 
 	return 0;
 }
-
-

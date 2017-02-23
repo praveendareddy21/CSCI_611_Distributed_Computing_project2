@@ -19,7 +19,7 @@ class Map {
     std::string getMessage();
   private:
     char operator()(int y, int x);
-    Screen theMap;
+    //Screen theMap;
     const unsigned char* mapmem;
     int mapHeight;
     int mapWidth;
