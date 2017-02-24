@@ -39,21 +39,27 @@ using namespace std;
 #define C2P_WRITE_END 1
 
 
-class AutoTest{
+class BaseAutoTest{
 private:
 	int rows;
 	int cols;
 	int noticeCount;
 	int drawMapCount;
-	char * map
-	void setUpTest();
-	void cleanUpTest();
+	char * map;
+	void setUpTestEnv();
+	void cleanUpTestEnv();
 
 public:
-	AutoTest();
-	~AutoTest();
+	BaseAutoTest();
+	~BaseAutoTest();
+	void doTest();
 
 };
+
+class TestMapInit:public BaseAutoTest{
+
+};
+
 
 int main(){
 	int p2c[2],c2p[2]; // file descriptors  for pipes
