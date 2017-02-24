@@ -41,14 +41,14 @@ int main(){
 	 gameMap.getKey();
 	 gameMap.drawMap();
 
-	 /*
+
 	 gameMap.getKey();
 	 gameMap.drawMap();
 
 	 gameMap.getKey();
 	 gameMap.postNotice("");
 	 gameMap.drawMap();
-	*/
+
 
 
 	 //char a;

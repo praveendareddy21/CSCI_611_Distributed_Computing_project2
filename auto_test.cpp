@@ -72,19 +72,22 @@ int main(){
 		cout<<"map "<<map<<endl;
 
 
-		write(p2c[P2C_WRITE_END],"l",1);
+
 
 		char msgType;
 
-		read(c2p[C2P_READ_END],&msgType, sizeof(char));
-		read(c2p[C2P_READ_END],&noticeCount, sizeof(int));
-		read(c2p[C2P_READ_END],&drawMapCount,sizeof(int));
-		read(c2p[C2P_READ_END],map,rows*cols);
+		for(int i=0; i<3;i++){
+			write(p2c[P2C_WRITE_END],"l",1);
+
+			read(c2p[C2P_READ_END],&msgType, sizeof(char));
+			read(c2p[C2P_READ_END],&noticeCount, sizeof(int));
+			read(c2p[C2P_READ_END],&drawMapCount,sizeof(int));
+			read(c2p[C2P_READ_END],map,rows*cols);
 
 
-		cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
-				cout<<"map "<<map<<endl;
-
+			cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
+					cout<<"map "<<map<<endl;
+		}
 
 		//cout<<"message read in parent as : "<<msg2[0];
 
