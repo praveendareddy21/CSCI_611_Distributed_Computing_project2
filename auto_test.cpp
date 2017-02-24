@@ -43,21 +43,42 @@ class BaseAutoTest{
 private:
 	int rows;
 	int cols;
-	int noticeCount;
-	int drawMapCount;
 	char * map;
 	void setUpTestEnv();
 	void cleanUpTestEnv();
 
+	int noticeCount;
+	int drawMapCount;
+	int p2c[2];
+	int c2p[2];
+	pid_t parent_pid;
+	pid_t child_pid;
+
 public:
 	BaseAutoTest(int, int, char*);
-	~BaseAutoTest();
+	virtual ~BaseAutoTest();
 	virtual void doTest();
 
 };
 BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
 	noticeCount=0;
 	drawMapCount=0;
+	parent_pid = -1;
+	child_pid = -1;
+}
+
+BaseAutoTest::~BaseAutoTest(){
+
+}
+void BaseAutoTest::doTest(){
+
+}
+
+void BaseAutoTest::setUpTestEnv(){
+
+}
+void BaseAutoTest::cleanUpTestEnv(){
+
 }
 
 class TestMapInit:public BaseAutoTest{
