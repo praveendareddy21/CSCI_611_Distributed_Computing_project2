@@ -70,7 +70,7 @@ BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
 }
 
 BaseAutoTest::~BaseAutoTest(){
-
+	cleanUpTestEnv();
 }
 void BaseAutoTest::doTest(){
 
@@ -78,7 +78,25 @@ void BaseAutoTest::doTest(){
 
 
 void BaseAutoTest::cleanUpTestEnv(){
+	if(getpid() == child_pid)
+	{
+		close(p2c[P2C_READ_END]);
+		close(c2p[C2P_WRITE_END]);
+		//exit(0);
+	}
 
+	if(getpid() == parent_pid)
+	{
+		int status;
+		close(p2c[P2C_WRITE_END]);
+		close(c2p[C2P_READ_END]);
+		if( wait(&status) )
+		{
+
+		}
+		//exit(0);
+	}
+	cout<<"Cleaned up Test Environment"<<endl;
 }
 
 class TestMapInit:public BaseAutoTest{
@@ -87,6 +105,7 @@ class TestMapInit:public BaseAutoTest{
 
 
 void BaseAutoTest::setUpTestEnv(){
+	cout<<"Setting up Test Environment"<<endl;
 	pipe(p2c);
 	pipe(c2p);
 	int temp_pid;
@@ -134,31 +153,14 @@ void BaseAutoTest::setUpTestEnv(){
 		}
 
 
-		if(getpid() == child_pid)
-		{
-			close(p2c[P2C_READ_END]);
-			close(c2p[C2P_WRITE_END]);
-			exit(0);
-		}
 
-		if(getpid() == parent_pid)
-		{
-			int status;
-			close(p2c[P2C_WRITE_END]);
-			close(c2p[C2P_READ_END]);
-			if( wait(&status) )
-			{
-
-			}
-			exit(0);
-		}
 
 }
 
 int main(){
 	BaseAutoTest b(1,1,NULL);
 	//b.setUpTestEnv();
-
+	 //b.cleanUpTestEnv();
 }
 
 int main1(){
