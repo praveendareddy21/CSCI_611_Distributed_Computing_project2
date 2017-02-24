@@ -50,15 +50,20 @@ private:
 	void cleanUpTestEnv();
 
 public:
-	BaseAutoTest();
+	BaseAutoTest(int, int, char*);
 	~BaseAutoTest();
-	void doTest();
+	virtual void doTest();
 
 };
+BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
+	noticeCount=0;
+	drawMapCount=0;
+}
 
 class TestMapInit:public BaseAutoTest{
-
+	virtual void doTest();
 };
+
 
 
 int main(){
