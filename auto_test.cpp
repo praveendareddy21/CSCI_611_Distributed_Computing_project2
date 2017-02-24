@@ -39,6 +39,22 @@ using namespace std;
 #define C2P_WRITE_END 1
 
 
+class AutoTest{
+private:
+	int rows;
+	int cols;
+	int noticeCount;
+	int drawMapCount;
+	char * map
+	void setUpTest();
+	void cleanUpTest();
+
+public:
+	AutoTest();
+	~AutoTest();
+
+};
+
 int main(){
 	int p2c[2],c2p[2]; // file descriptors  for pipes
 
@@ -87,6 +103,17 @@ int main(){
 
 			cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
 					cout<<"map "<<map<<endl;
+
+			if(msgType=='n'){
+				read(c2p[C2P_READ_END],&msgType, sizeof(char));
+				read(c2p[C2P_READ_END],&noticeCount, sizeof(int));
+				read(c2p[C2P_READ_END],&drawMapCount,sizeof(int));
+				read(c2p[C2P_READ_END],map,rows*cols);
+
+
+				cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
+						cout<<"map "<<map<<endl;
+			}
 		}
 
 		//cout<<"message read in parent as : "<<msg2[0];
