@@ -48,7 +48,7 @@ int main(){
 
 	pipe(p2c);
 	pipe(c2p);
-	int rows, cols;
+	int rows, cols, noticeCount, drawMapCount;
 
 	parent_pid = getpid();
 
@@ -71,6 +71,19 @@ int main(){
 		cout<<"r "<<rows<<"c "<<cols<<endl;
 		cout<<"map "<<map<<endl;
 
+
+		write(p2c[P2C_WRITE_END],"l",1);
+
+		char msgType;
+
+		read(c2p[C2P_READ_END],&msgType, sizeof(char));
+		read(c2p[C2P_READ_END],&noticeCount, sizeof(int));
+		read(c2p[C2P_READ_END],&drawMapCount,sizeof(int));
+		read(c2p[C2P_READ_END],map,rows*cols);
+
+
+		cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
+				cout<<"map "<<map<<endl;
 
 
 		//cout<<"message read in parent as : "<<msg2[0];

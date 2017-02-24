@@ -31,34 +31,47 @@
 Map::Map(const unsigned char* mmem, int ylength, int xwidth)
   : mapHeight(ylength), mapWidth(xwidth), mapmem(mmem)  //, theMap(ylength, xwidth)
 {
-
+  noticeCount = 0;
+  drawMapCount = 0;
 	write(1, &mapHeight, sizeof(int));
-	  write(1, &mapWidth, sizeof(int));
-	  write(1, mapmem, mapHeight*mapWidth);
+	write(1, &mapWidth, sizeof(int));
+	write(1, mapmem, mapHeight*mapWidth);
 
 }
 
 int Map::getKey()
 {
-	/*
-	write(1, &drawmaps, sizeof(int));
-	  write(1, &postnotices, sizeof(int));
-	  write(1, mapptr, rows*cols);
-	  char xyz;
-	  read(0, &xyz, sizeof(char));
-	  return xyz;
-	 */
-	return 106;
+  //write(1, &noticeCount, sizeof(int));
+	//write(1, &drawMapCount, sizeof(int));
+	//write(1, mapmem, mapHeight*mapWidth);
+
+	char key;
+	read(0, &key, sizeof(char));
+	return key;
+
 }
 void Map::postNotice(const char* msg)
 {
-  // write(1, &postnotices, sizeof(int));
+  noticeCount = noticeCount + 1;
+
+  char msgType = 'n';
+
+  write(1, &msgType, sizeof(char));
+  write(1, &noticeCount, sizeof(int));
+  write(1, &drawMapCount, sizeof(int));
+  write(1, mapmem, mapHeight*mapWidth);
 
 }
 
 void Map::drawMap()
 {
-	// write(1, &postnotices, sizeof(int));
+  drawMapCount = drawMapCount + 1;
+  char msgType = 'm';
+
+  write(1, &msgType, sizeof(char));
+  write(1, &noticeCount, sizeof(int));
+  write(1, &drawMapCount, sizeof(int));
+  write(1, mapmem, mapHeight*mapWidth);
 }
 
 //Calculate offset into memory array
