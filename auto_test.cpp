@@ -44,8 +44,7 @@ private:
 	int rows;
 	int cols;
 	char * map;
-	void setUpTestEnv();
-	void cleanUpTestEnv();
+
 
 	int noticeCount;
 	int drawMapCount;
@@ -58,6 +57,8 @@ public:
 	BaseAutoTest(int, int, char*);
 	virtual ~BaseAutoTest();
 	virtual void doTest();
+	void setUpTestEnv();
+	void cleanUpTestEnv();
 
 };
 BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
@@ -65,6 +66,7 @@ BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
 	drawMapCount=0;
 	parent_pid = -1;
 	child_pid = -1;
+	setUpTestEnv();
 }
 
 BaseAutoTest::~BaseAutoTest(){
@@ -74,9 +76,7 @@ void BaseAutoTest::doTest(){
 
 }
 
-void BaseAutoTest::setUpTestEnv(){
 
-}
 void BaseAutoTest::cleanUpTestEnv(){
 
 }
@@ -86,8 +86,82 @@ class TestMapInit:public BaseAutoTest{
 };
 
 
+void BaseAutoTest::setUpTestEnv(){
+	pipe(p2c);
+	pipe(c2p);
+	int temp_pid;
+	parent_pid = getpid();
+
+	temp_pid = fork();
+		if(temp_pid > 0 ){ // parent process
+
+			child_pid = temp_pid;
+			cout<<"in parent process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
+
+			// closing useless pipe ends
+			close(p2c[P2C_READ_END]);
+			close(c2p[C2P_WRITE_END]);
+
+			//cin>>msg;
+			//write(p2c[P2C_WRITE_END],"j",1);
+
+			//char msg2[6];
+			read(c2p[C2P_READ_END],&rows, sizeof(int));
+			read(c2p[C2P_READ_END],&cols,sizeof(int));
+			char map [rows* cols +1 ];
+			read(c2p[C2P_READ_END],map,rows*cols);
+			cout<<"r "<<rows<<"c "<<cols<<endl;
+			cout<<"map "<<map<<endl;
+
+			char msgType;
+
+		}
+		else{ // child process
+			child_pid = getpid();
+			cout<<"in child process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
+
+			// closing useless pipe ends
+			close(p2c[P2C_WRITE_END]);
+			close(c2p[C2P_READ_END]);
+
+			dup2(p2c[P2C_READ_END], 0);
+			close(p2c[P2C_READ_END]);
+
+			dup2(c2p[C2P_WRITE_END], 1);
+			close(c2p[C2P_WRITE_END]);
+
+			execl("stub","",NULL);
+		}
+
+
+		if(getpid() == child_pid)
+		{
+			close(p2c[P2C_READ_END]);
+			close(c2p[C2P_WRITE_END]);
+			exit(0);
+		}
+
+		if(getpid() == parent_pid)
+		{
+			int status;
+			close(p2c[P2C_WRITE_END]);
+			close(c2p[C2P_READ_END]);
+			if( wait(&status) )
+			{
+
+			}
+			exit(0);
+		}
+
+}
 
 int main(){
+	BaseAutoTest b(1,1,NULL);
+	//b.setUpTestEnv();
+
+}
+
+int main1(){
 	int p2c[2],c2p[2]; // file descriptors  for pipes
 
 	pid_t parent_pid, child_pid;
