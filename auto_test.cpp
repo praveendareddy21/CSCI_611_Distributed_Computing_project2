@@ -81,12 +81,10 @@ BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
 }
 
 BaseAutoTest::~BaseAutoTest(){
-	cleanUpTestEnv();
 }
 void BaseAutoTest::doTest(){
 
 }
-
 
 void BaseAutoTest::cleanUpTestEnv(){
 
@@ -195,7 +193,7 @@ void BaseAutoTest::setUpTestEnv(){
 class TestMapInit:public BaseAutoTest{
 public:
 	TestMapInit(int r, int c, char* m):BaseAutoTest(r,c,m){
-		
+
 	}
 	virtual void doTest();
 };
@@ -205,122 +203,26 @@ void TestMapInit::doTest(){
 	cout<<"TestMapInit Success"<<endl;
 	return;
 }
+
+class TestOnlyRightKey:public BaseAutoTest{
+public:
+	TestOnlyRightKey(int r, int c, char* m):BaseAutoTest(r,c,m){
+
+	}
+	virtual void doTest();
+};
+
+void TestOnlyRightKey::doTest(){
+
+	cout<<"TestOnlyRightKey Success"<<endl;
+	return;
+}
 int main(){
 	TestMapInit b(1,1,NULL);
 	b.doTest();
+	b.cleanUpTestEnv();
+	TestOnlyRightKey r(1,1, NULL);
+	r.doTest();
+	r.cleanUpTestEnv();
 
-}
-
-int main1(){
-	int p_to_c1[2],c1_to_p[2]; // file descriptors  for pipes
-
-	pid_t parent_pid, child_pid;
-
-	char  msg [] ="h";
-
-	pipe(p_to_c1);
-	pipe(c1_to_p);
-	int rows, cols, noticeCount, drawMapCount;
-
-	parent_pid = getpid();
-
-	child_pid = fork();
-	if(child_pid > 0 ){ // parent process
-		cout<<"in parent process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
-
-		// closing useless pipe ends
-		close(p_to_c1[P_to_C1_READ_END]);
-		close(c1_to_p[C1_to_P_WRITE_END]);
-
-		//cin>>msg;
-		//write(p_to_c1[P_to_C1_WRITE_END],"j",1);
-
-		//char msg2[6];
-		read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
-		read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
-		char map [rows* cols +1 ];
-		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
-		cout<<"r "<<rows<<"c "<<cols<<endl;
-		cout<<"map "<<map<<endl;
-
-
-
-
-		char msgType;
-
-		for(int i=0; i<3;i++){
-			write(p_to_c1[P_to_C1_WRITE_END],"l",1);
-
-			read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
-			read(c1_to_p[C1_to_P_READ_END],&noticeCount, sizeof(int));
-			read(c1_to_p[C1_to_P_READ_END],&drawMapCount,sizeof(int));
-			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
-
-
-			cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
-					cout<<"map "<<map<<endl;
-
-			if(msgType=='n'){
-				read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
-				read(c1_to_p[C1_to_P_READ_END],&noticeCount, sizeof(int));
-				read(c1_to_p[C1_to_P_READ_END],&drawMapCount,sizeof(int));
-				read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
-
-
-				cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
-						cout<<"map "<<map<<endl;
-			}
-		}
-
-		//cout<<"message read in parent as : "<<msg2[0];
-
-
-
-
-	}
-	else{ // child process
-		child_pid = getpid();
-		cout<<"in child process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
-
-		// closing useless pipe ends
-		close(p_to_c1[P_to_C1_WRITE_END]);
-		close(c1_to_p[C1_to_P_READ_END]);
-
-		dup2(p_to_c1[P_to_C1_READ_END], 0);
-		close(p_to_c1[P_to_C1_READ_END]);
-
-
-
-		dup2(c1_to_p[C1_to_P_WRITE_END], 1);
-		close(c1_to_p[C1_to_P_WRITE_END]);
-
-		execl("stub","",NULL);
-
-
-
-	}
-
-
-	if(getpid() == child_pid)
-	{
-		close(p_to_c1[P_to_C1_READ_END]);
-		close(c1_to_p[C1_to_P_WRITE_END]);
-		exit(0);
-	}
-
-	if(getpid() == parent_pid)
-	{
-		int status;
-		close(p_to_c1[P_to_C1_WRITE_END]);
-		close(c1_to_p[C1_to_P_READ_END]);
-		if( wait(&status) )
-		{
-
-		}
-		exit(0);
-	}
-
-
-
-	cout<<"out";
 }
