@@ -35,20 +35,26 @@ using namespace std;
 
 int main(){
 
-	 unsigned char  map_mem[5] = "****";
-	 Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,2);
+	 unsigned char  map_mem[7] = "***  *";
+	 Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,3);
+
+
+	 /*
 
 	 gameMap.getKey();
 	 gameMap.drawMap();
 
 
+
 	 gameMap.getKey();
 	 gameMap.drawMap();
 
 	 gameMap.getKey();
-	 gameMap.postNotice("");
+	 //gameMap.postNotice("");
 	 gameMap.drawMap();
 
+
+	 */
 
 
 	 //char a;

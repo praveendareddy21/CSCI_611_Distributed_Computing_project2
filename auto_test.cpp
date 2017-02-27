@@ -32,12 +32,17 @@
 
 using namespace std;
 
-#define P2C_READ_END 0
-#define P2C_WRITE_END 1
+#define P_to_C1_READ_END 0
+#define P_to_C1_WRITE_END 1
 
-#define C2P_READ_END 0
-#define C2P_WRITE_END 1
+#define C1_to_P_READ_END 0
+#define C1_to_P_WRITE_END 1
 
+#define P_to_C2_READ_END 0
+#define P_to_C2_WRITE_END 1
+
+#define C2_to_P_READ_END 0
+#define C2_to_P_WRITE_END 1
 
 class BaseAutoTest{
 private:
@@ -48,10 +53,15 @@ private:
 
 	int noticeCount;
 	int drawMapCount;
-	int p2c[2];
-	int c2p[2];
+	int p_to_c1[2];
+	int c1_to_p[2];
+
+	int p_to_c2[2];
+	int c2_to_p[2];
+
 	pid_t parent_pid;
-	pid_t child_pid;
+	pid_t child_1_pid;
+	pid_t child_2_pid;
 
 public:
 	BaseAutoTest(int, int, char*);
@@ -65,7 +75,8 @@ BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
 	noticeCount=0;
 	drawMapCount=0;
 	parent_pid = -1;
-	child_pid = -1;
+	child_1_pid = -1;
+	child_2_pid = -1;
 	setUpTestEnv();
 }
 
@@ -78,18 +89,14 @@ void BaseAutoTest::doTest(){
 
 
 void BaseAutoTest::cleanUpTestEnv(){
-	if(getpid() == child_pid)
-	{
-		close(p2c[P2C_READ_END]);
-		close(c2p[C2P_WRITE_END]);
-		//exit(0);
-	}
 
 	if(getpid() == parent_pid)
 	{
 		int status;
-		close(p2c[P2C_WRITE_END]);
-		close(c2p[C2P_READ_END]);
+		close(p_to_c1[P_to_C1_WRITE_END]);
+		close(c1_to_p[C1_to_P_READ_END]);
+		close(p_to_c2[P_to_C2_WRITE_END]);
+		close(c2_to_p[C2_to_P_READ_END]);
 		if( wait(&status) )
 		{
 
@@ -106,48 +113,84 @@ class TestMapInit:public BaseAutoTest{
 
 void BaseAutoTest::setUpTestEnv(){
 	cout<<"Setting up Test Environment"<<endl;
-	pipe(p2c);
-	pipe(c2p);
+	pipe(p_to_c1);
+	pipe(c1_to_p);
+	pipe(p_to_c2);
+	pipe(c2_to_p);
+
 	int temp_pid;
 	parent_pid = getpid();
 
 	temp_pid = fork();
 		if(temp_pid > 0 ){ // parent process
 
-			child_pid = temp_pid;
-			cout<<"in parent process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
+			child_1_pid = temp_pid;
+
+			temp_pid = fork();
+				if(temp_pid == 0 ){// child 2
+					child_2_pid = getpid();
+					cout<<"in child process : parent pid :"<<parent_pid<<" child2 pid : "<<child_2_pid<<endl;
+
+					// closing useless pipe ends
+					close(p_to_c2[P_to_C2_WRITE_END]);
+					close(c2_to_p[C2_to_P_READ_END]);
+
+					dup2(p_to_c2[P_to_C2_READ_END], 0);
+					close(p_to_c2[P_to_C2_READ_END]);
+
+					dup2(c2_to_p[C2_to_P_WRITE_END], 1);
+					close(c2_to_p[C2_to_P_WRITE_END]);
+
+					execl("stub","",NULL);
+				}
+				child_2_pid = temp_pid;
+			cout<<"in parent process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<" child2 pid : "<<child_2_pid<<endl;
 
 			// closing useless pipe ends
-			close(p2c[P2C_READ_END]);
-			close(c2p[C2P_WRITE_END]);
+			close(p_to_c1[P_to_C1_READ_END]);
+			close(c1_to_p[C1_to_P_WRITE_END]);
+
+			close(p_to_c2[P_to_C2_READ_END]);
+			close(c2_to_p[C2_to_P_WRITE_END]);
 
 			//cin>>msg;
-			//write(p2c[P2C_WRITE_END],"j",1);
+			//write(p_to_c1[P_to_C1_WRITE_END],"j",1);
 
 			//char msg2[6];
-			read(c2p[C2P_READ_END],&rows, sizeof(int));
-			read(c2p[C2P_READ_END],&cols,sizeof(int));
+			read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
+			read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
 			char map [rows* cols +1 ];
-			read(c2p[C2P_READ_END],map,rows*cols);
+			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<endl;
-			cout<<"map "<<map<<endl;
+			cout<<"map "<<map<<endl;\
+
+			read(c2_to_p[C2_to_P_READ_END],&rows, sizeof(int));
+			read(c2_to_p[C2_to_P_READ_END],&cols,sizeof(int));
+			char map2 [rows* cols +1 ];
+			read(c2_to_p[C2_to_P_READ_END],map2,rows*cols);
+			cout<<"r "<<rows<<"c "<<cols<<endl;
+			cout<<"map2 "<<map2<<endl;
+
+
 
 			char msgType;
 
+
+
 		}
-		else{ // child process
-			child_pid = getpid();
-			cout<<"in child process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
+		else{ // child1 process
+			child_1_pid = getpid();
+			cout<<"in child process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<endl;
 
 			// closing useless pipe ends
-			close(p2c[P2C_WRITE_END]);
-			close(c2p[C2P_READ_END]);
+			close(p_to_c1[P_to_C1_WRITE_END]);
+			close(c1_to_p[C1_to_P_READ_END]);
 
-			dup2(p2c[P2C_READ_END], 0);
-			close(p2c[P2C_READ_END]);
+			dup2(p_to_c1[P_to_C1_READ_END], 0);
+			close(p_to_c1[P_to_C1_READ_END]);
 
-			dup2(c2p[C2P_WRITE_END], 1);
-			close(c2p[C2P_WRITE_END]);
+			dup2(c1_to_p[C1_to_P_WRITE_END], 1);
+			close(c1_to_p[C1_to_P_WRITE_END]);
 
 			execl("stub","",NULL);
 		}
@@ -164,14 +207,14 @@ int main(){
 }
 
 int main1(){
-	int p2c[2],c2p[2]; // file descriptors  for pipes
+	int p_to_c1[2],c1_to_p[2]; // file descriptors  for pipes
 
 	pid_t parent_pid, child_pid;
 
 	char  msg [] ="h";
 
-	pipe(p2c);
-	pipe(c2p);
+	pipe(p_to_c1);
+	pipe(c1_to_p);
 	int rows, cols, noticeCount, drawMapCount;
 
 	parent_pid = getpid();
@@ -181,17 +224,17 @@ int main1(){
 		cout<<"in parent process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
 
 		// closing useless pipe ends
-		close(p2c[P2C_READ_END]);
-		close(c2p[C2P_WRITE_END]);
+		close(p_to_c1[P_to_C1_READ_END]);
+		close(c1_to_p[C1_to_P_WRITE_END]);
 
 		//cin>>msg;
-		//write(p2c[P2C_WRITE_END],"j",1);
+		//write(p_to_c1[P_to_C1_WRITE_END],"j",1);
 
 		//char msg2[6];
-		read(c2p[C2P_READ_END],&rows, sizeof(int));
-		read(c2p[C2P_READ_END],&cols,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
 		char map [rows* cols +1 ];
-		read(c2p[C2P_READ_END],map,rows*cols);
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"r "<<rows<<"c "<<cols<<endl;
 		cout<<"map "<<map<<endl;
 
@@ -201,22 +244,22 @@ int main1(){
 		char msgType;
 
 		for(int i=0; i<3;i++){
-			write(p2c[P2C_WRITE_END],"l",1);
+			write(p_to_c1[P_to_C1_WRITE_END],"l",1);
 
-			read(c2p[C2P_READ_END],&msgType, sizeof(char));
-			read(c2p[C2P_READ_END],&noticeCount, sizeof(int));
-			read(c2p[C2P_READ_END],&drawMapCount,sizeof(int));
-			read(c2p[C2P_READ_END],map,rows*cols);
+			read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+			read(c1_to_p[C1_to_P_READ_END],&noticeCount, sizeof(int));
+			read(c1_to_p[C1_to_P_READ_END],&drawMapCount,sizeof(int));
+			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
 
 			cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
 					cout<<"map "<<map<<endl;
 
 			if(msgType=='n'){
-				read(c2p[C2P_READ_END],&msgType, sizeof(char));
-				read(c2p[C2P_READ_END],&noticeCount, sizeof(int));
-				read(c2p[C2P_READ_END],&drawMapCount,sizeof(int));
-				read(c2p[C2P_READ_END],map,rows*cols);
+				read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+				read(c1_to_p[C1_to_P_READ_END],&noticeCount, sizeof(int));
+				read(c1_to_p[C1_to_P_READ_END],&drawMapCount,sizeof(int));
+				read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
 
 				cout<<"msgtype : "<<msgType<<" notice : "<<noticeCount<<" drawcont : "<<drawMapCount<<endl;
@@ -235,16 +278,16 @@ int main1(){
 		cout<<"in child process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
 
 		// closing useless pipe ends
-		close(p2c[P2C_WRITE_END]);
-		close(c2p[C2P_READ_END]);
+		close(p_to_c1[P_to_C1_WRITE_END]);
+		close(c1_to_p[C1_to_P_READ_END]);
 
-		dup2(p2c[P2C_READ_END], 0);
-		close(p2c[P2C_READ_END]);
+		dup2(p_to_c1[P_to_C1_READ_END], 0);
+		close(p_to_c1[P_to_C1_READ_END]);
 
 
 
-		dup2(c2p[C2P_WRITE_END], 1);
-		close(c2p[C2P_WRITE_END]);
+		dup2(c1_to_p[C1_to_P_WRITE_END], 1);
+		close(c1_to_p[C1_to_P_WRITE_END]);
 
 		execl("stub","",NULL);
 
@@ -255,16 +298,16 @@ int main1(){
 
 	if(getpid() == child_pid)
 	{
-		close(p2c[P2C_READ_END]);
-		close(c2p[C2P_WRITE_END]);
+		close(p_to_c1[P_to_C1_READ_END]);
+		close(c1_to_p[C1_to_P_WRITE_END]);
 		exit(0);
 	}
 
 	if(getpid() == parent_pid)
 	{
 		int status;
-		close(p2c[P2C_WRITE_END]);
-		close(c2p[C2P_READ_END]);
+		close(p_to_c1[P_to_C1_WRITE_END]);
+		close(c1_to_p[C1_to_P_READ_END]);
 		if( wait(&status) )
 		{
 
