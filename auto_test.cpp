@@ -122,8 +122,22 @@ void BaseAutoTest::setUpTestEnv(){
 	parent_pid = getpid();
 
 	temp_pid = fork();
-		if(temp_pid > 0 ){ // parent process
+		if(temp_pid == 0 ){ // child process
+			child_1_pid = getpid();
+			cout<<"in child process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<endl;
 
+			// closing useless pipe ends
+			close(p_to_c1[P_to_C1_WRITE_END]);
+			close(c1_to_p[C1_to_P_READ_END]);
+
+			dup2(p_to_c1[P_to_C1_READ_END], 0);
+			close(p_to_c1[P_to_C1_READ_END]);
+			dup2(c1_to_p[C1_to_P_WRITE_END], 1);
+			close(c1_to_p[C1_to_P_WRITE_END]);
+
+			execl("stub","",NULL);
+		}
+		else{ // parent process
 			child_1_pid = temp_pid;
 
 			temp_pid = fork();
@@ -143,7 +157,8 @@ void BaseAutoTest::setUpTestEnv(){
 
 					execl("stub","",NULL);
 				}
-				child_2_pid = temp_pid;
+
+			child_2_pid = temp_pid;
 			cout<<"in parent process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<" child2 pid : "<<child_2_pid<<endl;
 
 			// closing useless pipe ends
@@ -153,10 +168,7 @@ void BaseAutoTest::setUpTestEnv(){
 			close(p_to_c2[P_to_C2_READ_END]);
 			close(c2_to_p[C2_to_P_WRITE_END]);
 
-			//cin>>msg;
-			//write(p_to_c1[P_to_C1_WRITE_END],"j",1);
 
-			//char msg2[6];
 			read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
 			read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
 			char map [rows* cols +1 ];
@@ -173,26 +185,6 @@ void BaseAutoTest::setUpTestEnv(){
 
 
 
-			char msgType;
-
-
-
-		}
-		else{ // child1 process
-			child_1_pid = getpid();
-			cout<<"in child process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<endl;
-
-			// closing useless pipe ends
-			close(p_to_c1[P_to_C1_WRITE_END]);
-			close(c1_to_p[C1_to_P_READ_END]);
-
-			dup2(p_to_c1[P_to_C1_READ_END], 0);
-			close(p_to_c1[P_to_C1_READ_END]);
-
-			dup2(c1_to_p[C1_to_P_WRITE_END], 1);
-			close(c1_to_p[C1_to_P_WRITE_END]);
-
-			execl("stub","",NULL);
 		}
 
 
