@@ -48,9 +48,6 @@ class BaseAutoTest{
 private:
 	int rows;
 	int cols;
-	char * map;
-
-
 	int noticeCount;
 	int drawMapCount;
 	int p_to_c1[2];
@@ -62,6 +59,7 @@ private:
 	pid_t parent_pid;
 	pid_t child_1_pid;
 	pid_t child_2_pid;
+	char * map_mem;
 
 public:
 	BaseAutoTest(int, int, char*);
@@ -71,7 +69,7 @@ public:
 	void cleanUpTestEnv();
 
 };
-BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map(m){
+BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map_mem(m){
 	noticeCount=0;
 	drawMapCount=0;
 	parent_pid = -1;
@@ -221,8 +219,6 @@ int main(){
 	TestMapInit b(1,1,NULL);
 	b.doTest();
 	b.cleanUpTestEnv();
-	TestOnlyRightKey r(1,1, NULL);
-	r.doTest();
-	r.cleanUpTestEnv();
+
 
 }
