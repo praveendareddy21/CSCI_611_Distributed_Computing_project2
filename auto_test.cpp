@@ -106,9 +106,7 @@ void BaseAutoTest::cleanUpTestEnv(){
 	cout<<"Cleaned up Test Environment"<<endl;
 }
 
-class TestMapInit:public BaseAutoTest{
-	virtual void doTest();
-};
+
 
 
 void BaseAutoTest::setUpTestEnv(){
@@ -158,6 +156,7 @@ void BaseAutoTest::setUpTestEnv(){
 					execl("stub","",NULL);
 				}
 
+
 			child_2_pid = temp_pid;
 			cout<<"in parent process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<" child2 pid : "<<child_2_pid<<endl;
 
@@ -192,10 +191,24 @@ void BaseAutoTest::setUpTestEnv(){
 
 }
 
+
+class TestMapInit:public BaseAutoTest{
+public:
+	TestMapInit(int r, int c, char* m):BaseAutoTest(r,c,m){
+		
+	}
+	virtual void doTest();
+};
+
+void TestMapInit::doTest(){
+
+	cout<<"TestMapInit Success"<<endl;
+	return;
+}
 int main(){
-	BaseAutoTest b(1,1,NULL);
-	//b.setUpTestEnv();
-	 //b.cleanUpTestEnv();
+	TestMapInit b(1,1,NULL);
+	b.doTest();
+
 }
 
 int main1(){
