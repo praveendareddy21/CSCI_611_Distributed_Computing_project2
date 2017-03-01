@@ -58,23 +58,25 @@ vector<vector< char > > readMapFromFile(char * mapFile, int &golds){
 int main(){
 
     char * file_name = "mymap_test.txt";
-    int fd1, golds;
+    int fd1, golds, rows, cols, count =0;
     char buf [100];
     vector<vector< char > > mapVector =readMapFromFile(file_name, golds) ;
 
-    /*
-    cout<<"golds "<<golds<<endl;
+    rows = mapVector.size();
+    cols = mapVector[0].size();
+    unsigned char  map_mem[rows*cols +1];
+
 
     for(unsigned i=0;i<mapVector.size();i++){
       for(unsigned j=0;j<mapVector[i].size();j++){
-        cout<<mapVector[i][j];
+        map_mem[count] = mapVector[i][j];
+        count++;
       }
-      cout<<endl;
     }
-    */
-	 unsigned char  map_mem[5] = "****";
+    map_mem[count] = '\0';
 
-   Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,2);
+
+   Map gameMap(reinterpret_cast<const unsigned char*>(map_mem), rows, cols);
 
    /*
    gameMap.getKey();
