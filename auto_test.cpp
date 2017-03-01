@@ -139,10 +139,14 @@ void BaseAutoTest::setUpTestEnv(){
 			//char msg2[6];
 			read(c2p[C2P_READ_END],&rows, sizeof(int));
 			read(c2p[C2P_READ_END],&cols,sizeof(int));
-			char map [rows* cols ];
+
+			
+			//char map [rows* cols ];
+			char  * map;
+
 			read(c2p[C2P_READ_END],map,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<" map_size "<<strlen(map)<<endl;
-			cout<<"map"<<endl;
+			cout<<"map "<<map<<endl;
 
 			for(int i=0; i< rows * cols; i++){
 				printf("%c", map[i]);
