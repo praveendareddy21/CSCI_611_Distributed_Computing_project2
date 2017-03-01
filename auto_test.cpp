@@ -117,6 +117,18 @@ void BaseAutoTest::setUpTestEnv(){
 			child_pid = temp_pid;
 			cout<<"in parent process : parent pid :"<<parent_pid<<" child pid : "<<child_pid<<endl;
 
+			
+			char * testMap ="2\n***\n* *\n* *";
+			char * file_name = "mymap_test.txt";
+
+	    mkfifo(file_name, S_IRUSR | S_IWUSR);
+	    int fd = open(file_name, O_WRONLY );
+
+	    write(fd, testMap, strlen(testMap));
+	    close(fd);
+	    unlink(file_name);
+
+
 			// closing useless pipe ends
 			close(p2c[P2C_READ_END]);
 			close(c2p[C2P_WRITE_END]);
