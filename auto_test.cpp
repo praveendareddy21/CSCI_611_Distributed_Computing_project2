@@ -62,6 +62,9 @@ private:
 	pid_t child_2_pid;
 	char * map_mem;
 	char mapfile_content[200];
+	char p1_initial_map[200];
+	char p2_initial_map[200];
+
 	string mapfile_cont;
 
 public:
@@ -159,11 +162,11 @@ void BaseAutoTest::setUpTestEnv(){
 
 				read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
 				read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
-				char map [rows* cols +1 ];
-				read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+				read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols);
 				cout<<"r "<<rows<<"c "<<cols<<endl;
 				cout<<"map "<<endl;
-				printf("%s\n", map);
+				printf("%s\n", p1_initial_map);
 
 
 		}
@@ -201,18 +204,19 @@ void BaseAutoTest::setUpTestEnv(){
 			read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
 			read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
 			char map [rows* cols +1 ];
-			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+			read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<endl;
 			cout<<"map "<<endl;
-			printf("%s\n", map);
+			printf("%s\n", p1_initial_map);
 
 			read(c2_to_p[C2_to_P_READ_END],&rows, sizeof(int));
 			read(c2_to_p[C2_to_P_READ_END],&cols,sizeof(int));
-			char map2 [rows* cols +1 ];
-			read(c2_to_p[C2_to_P_READ_END],map2,rows*cols);
+
+			read(c1_to_p[C1_to_P_READ_END],p2_initial_map,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<endl;
-			cout<<"map2 "<<endl;
-			printf("%s\n", map2);
+			cout<<"map "<<endl;
+			printf("%s\n", p2_initial_map);
 		}
 
 
