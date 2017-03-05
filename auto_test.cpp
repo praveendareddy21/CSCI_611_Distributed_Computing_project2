@@ -61,16 +61,18 @@ private:
 	pid_t child_1_pid;
 	pid_t child_2_pid;
 	char * map_mem;
+	char mapfile_content[200];
+	string mapfile_cont;
 
 public:
-	BaseAutoTest(int, int, char*, int);
+	BaseAutoTest(int, int, string, int);
 	virtual ~BaseAutoTest();
 	virtual void doTest();
 	void setUpTestEnv();
 	void cleanUpTestEnv();
 
 };
-BaseAutoTest::BaseAutoTest(int r,int c,char *m, int child):rows(r), cols(c), map_mem(m), children_count(child){
+BaseAutoTest::BaseAutoTest(int r,int c,string m, int child):rows(r), cols(c), mapfile_cont(m), children_count(child){
 	noticeCount=0;
 	drawMapCount=0;
 	parent_pid = -1;
@@ -134,13 +136,16 @@ void BaseAutoTest::setUpTestEnv(){
 		}
 		else{ // parent process
 			child_1_pid = temp_pid;
-			char * testMap ="2\n****\n*  *\n** *";
+			//char * testMap ="2\n****\n*  *\n** *";
+
+			strcpy(mapfile_content, mapfile_cont.c_str() );
+
 			char * file_name = "mymap_test.txt";
 
 			mkfifo(file_name, S_IRUSR | S_IWUSR);
 			int fd = open(file_name, O_WRONLY );
 
-			write(fd, testMap, strlen(testMap));
+			write(fd, mapfile_content, strlen(mapfile_content));
 			close(fd);
 			unlink(file_name);
 
@@ -217,7 +222,7 @@ void BaseAutoTest::setUpTestEnv(){
 
 class TestMapInit:public BaseAutoTest{
 public:
-	TestMapInit(int r, int c, char* m, int ch):BaseAutoTest(r,c,m,ch){
+	TestMapInit(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
 
 	}
 	virtual void doTest();
@@ -231,7 +236,7 @@ void TestMapInit::doTest(){
 
 class TestOnlyRightKey:public BaseAutoTest{
 public:
-	TestOnlyRightKey(int r, int c, char* m, int ch):BaseAutoTest(r,c,m,ch){
+	TestOnlyRightKey(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
 
 	}
 	virtual void doTest();
@@ -243,7 +248,7 @@ void TestOnlyRightKey::doTest(){
 	return;
 }
 int main(){
-	TestMapInit b(1,1,NULL, 1);
+	TestMapInit b(3, 5, "2\n*****\n**  *\n*** *", 1);
 	b.doTest();
 	b.cleanUpTestEnv();
 
