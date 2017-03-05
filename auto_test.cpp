@@ -46,6 +46,7 @@ using namespace std;
 
 class BaseAutoTest{
 private:
+	int children_count;
 	int rows;
 	int cols;
 	int noticeCount;
@@ -62,14 +63,14 @@ private:
 	char * map_mem;
 
 public:
-	BaseAutoTest(int, int, char*);
+	BaseAutoTest(int, int, char*, int);
 	virtual ~BaseAutoTest();
 	virtual void doTest();
 	void setUpTestEnv();
 	void cleanUpTestEnv();
 
 };
-BaseAutoTest::BaseAutoTest(int r,int c,char *m):rows(r),cols(c),map_mem(m){
+BaseAutoTest::BaseAutoTest(int r,int c,char *m, int child):rows(r), cols(c), map_mem(m), children_count(child){
 	noticeCount=0;
 	drawMapCount=0;
 	parent_pid = -1;
@@ -134,6 +135,23 @@ void BaseAutoTest::setUpTestEnv(){
 		else{ // parent process
 			child_1_pid = temp_pid;
 
+			if(children_count == 1){ // children_count ==1
+
+				cout<<"in parent process : parent pid :"<<parent_pid<<" child1 pid : "<<child_1_pid<<endl;
+
+				// closing useless pipe ends
+				close(p_to_c1[P_to_C1_READ_END]);
+				close(c1_to_p[C1_to_P_WRITE_END]);
+
+				read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
+				read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
+				char map [rows* cols +1 ];
+				read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+				cout<<"r "<<rows<<"c "<<cols<<endl;
+				cout<<"map "<<map<<endl;
+
+		}
+		else{ // children_count ==2
 			temp_pid = fork();
 				if(temp_pid == 0 ){// child 2
 					child_2_pid = getpid();
@@ -177,7 +195,7 @@ void BaseAutoTest::setUpTestEnv(){
 			read(c2_to_p[C2_to_P_READ_END],map2,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<endl;
 			cout<<"map2 "<<map2<<endl;
-
+		}
 
 
 		}
@@ -190,7 +208,7 @@ void BaseAutoTest::setUpTestEnv(){
 
 class TestMapInit:public BaseAutoTest{
 public:
-	TestMapInit(int r, int c, char* m):BaseAutoTest(r,c,m){
+	TestMapInit(int r, int c, char* m, int ch):BaseAutoTest(r,c,m,ch){
 
 	}
 	virtual void doTest();
@@ -204,7 +222,7 @@ void TestMapInit::doTest(){
 
 class TestOnlyRightKey:public BaseAutoTest{
 public:
-	TestOnlyRightKey(int r, int c, char* m):BaseAutoTest(r,c,m){
+	TestOnlyRightKey(int r, int c, char* m, int ch):BaseAutoTest(r,c,m,ch){
 
 	}
 	virtual void doTest();
@@ -216,7 +234,7 @@ void TestOnlyRightKey::doTest(){
 	return;
 }
 int main(){
-	TestMapInit b(1,1,NULL);
+	TestMapInit b(1,1,NULL, 1);
 	b.doTest();
 	b.cleanUpTestEnv();
 
