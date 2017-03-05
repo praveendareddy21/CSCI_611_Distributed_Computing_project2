@@ -162,7 +162,9 @@ void BaseAutoTest::setUpTestEnv(){
 				char map [rows* cols +1 ];
 				read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 				cout<<"r "<<rows<<"c "<<cols<<endl;
-				cout<<"map "<<map<<endl;
+				cout<<"map "<<endl;
+				printf("%s\n", map);
+
 
 		}
 		else{ // children_count ==2
@@ -201,14 +203,16 @@ void BaseAutoTest::setUpTestEnv(){
 			char map [rows* cols +1 ];
 			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<endl;
-			cout<<"map "<<map<<endl;\
+			cout<<"map "<<endl;
+			printf("%s\n", map);
 
 			read(c2_to_p[C2_to_P_READ_END],&rows, sizeof(int));
 			read(c2_to_p[C2_to_P_READ_END],&cols,sizeof(int));
 			char map2 [rows* cols +1 ];
 			read(c2_to_p[C2_to_P_READ_END],map2,rows*cols);
 			cout<<"r "<<rows<<"c "<<cols<<endl;
-			cout<<"map2 "<<map2<<endl;
+			cout<<"map2 "<<endl;
+			printf("%s\n", map2);
 		}
 
 
