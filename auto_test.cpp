@@ -134,6 +134,15 @@ void BaseAutoTest::setUpTestEnv(){
 		}
 		else{ // parent process
 			child_1_pid = temp_pid;
+			char * testMap ="2\n****\n*  *\n** *";
+			char * file_name = "mymap_test.txt";
+
+			mkfifo(file_name, S_IRUSR | S_IWUSR);
+			int fd = open(file_name, O_WRONLY );
+
+			write(fd, testMap, strlen(testMap));
+			close(fd);
+			unlink(file_name);
 
 			if(children_count == 1){ // children_count ==1
 

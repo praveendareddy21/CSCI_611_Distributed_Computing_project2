@@ -33,28 +33,63 @@
 
 using namespace std;
 
+vector<vector< char > > readMapFromFile(char * mapFile, int &golds){
+  vector<vector< char > > mapVector;
+  vector< char > temp;
+  string line;
+  char c;
+  ifstream mapStream(mapFile);
+  mapStream >>golds;
+  mapStream.get(c);
+
+  while(getline(mapStream,line))
+  {
+     for(int i=0; i < line.length(); i++){
+       temp.push_back(line[i]);
+     }
+     mapVector.push_back(temp);
+     temp.clear();
+  }
+  //cout<<"ve size "<<mapVector.size()<<" col "<<mapVector[0].size()<<endl;;
+  return mapVector;
+}
+
+
 int main(){
 
-	 unsigned char  map_mem[7] = "***  *";
-	 Map gameMap(reinterpret_cast<const unsigned char*>(map_mem),2,3);
+    char * file_name = "mymap_test.txt";
+    int fd1, golds, rows, cols, count =0;
+    char buf [100];
+    vector<vector< char > > mapVector =readMapFromFile(file_name, golds) ;
+
+    rows = mapVector.size();
+    cols = mapVector[0].size();
+    unsigned char  map_mem[rows*cols +1];
 
 
-	 /*
+    for(unsigned i=0;i<mapVector.size();i++){
+      for(unsigned j=0;j<mapVector[i].size();j++){
+        map_mem[count] = mapVector[i][j];
+        count++;
+      }
+    }
+    map_mem[count] = '\0';
+
+
+   Map gameMap(reinterpret_cast<const unsigned char*>(map_mem), rows, cols);
+
+   /*
+   gameMap.getKey();
+	 gameMap.drawMap();
+
 
 	 gameMap.getKey();
 	 gameMap.drawMap();
 
-
-
 	 gameMap.getKey();
+	 gameMap.postNotice("");
 	 gameMap.drawMap();
-
-	 gameMap.getKey();
-	 //gameMap.postNotice("");
-	 gameMap.drawMap();
-
-
-	 */
+   */
 
 
 	 //char a;
