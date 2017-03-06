@@ -78,6 +78,10 @@ int main(){
 
    Map gameMap(reinterpret_cast<const unsigned char*>(map_mem), rows, cols);
 
+	 gameMap.getKey();
+	 gameMap.drawMap();
+
+
    /*
    gameMap.getKey();
 	 gameMap.drawMap();

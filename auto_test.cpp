@@ -45,12 +45,15 @@ using namespace std;
 #define C2_to_P_WRITE_END 1
 
 class BaseAutoTest{
-private:
+public:
 	int children_count;
 	int rows;
 	int cols;
-	int noticeCount;
-	int drawMapCount;
+	int p1_noticeCount;
+	int p1_drawMapCount;
+	int p2_noticeCount;
+	int p2_drawMapCount;
+
 	int p_to_c1[2];
 	int c1_to_p[2];
 
@@ -67,7 +70,7 @@ private:
 
 	string mapfile_cont;
 
-public:
+
 	BaseAutoTest(int, int, string, int);
 	virtual ~BaseAutoTest();
 	virtual void doTest();
@@ -76,8 +79,10 @@ public:
 
 };
 BaseAutoTest::BaseAutoTest(int r,int c,string m, int child):rows(r), cols(c), mapfile_cont(m), children_count(child){
-	noticeCount=0;
-	drawMapCount=0;
+	p1_noticeCount=0;
+	p1_drawMapCount=0;
+	p2_noticeCount=0;
+	p2_drawMapCount=0;
 	parent_pid = -1;
 	child_1_pid = -1;
 	child_2_pid = -1;
@@ -239,6 +244,18 @@ public:
 
 void TestPlayerCantMoveIntoWall::doTest(){
 
+	write(p_to_c1[P_to_C1_WRITE_END],"l",1);
+
+	char msgType,  map[rows*cols+1];
+	map[rows*cols] = '\0';
+	read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+	read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+	read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+	read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
+			cout<<"map "<<map<<endl;
+
 	cout<<"TestPlayerCantMoveIntoWall Success"<<endl;
 	return;
 }
@@ -274,13 +291,15 @@ void TestOnlyRightKey::doTest(){
 int main(){
 	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
 
-	TestPlayerCantMoveIntoWall t2(3, 3, "0\n***\n*  \n***", 1);
-	t2.doTest();
-	t2.cleanUpTestEnv();
-
-	TestPlayerCanMoveToEmpty t1(3, 3, "0\n***\n*  \n***", 1);
+	TestPlayerCantMoveIntoWall t1(3, 3, "0\n***\n* *\n***", 1);
 	t1.doTest();
 	t1.cleanUpTestEnv();
+
+	return 0;
+
+	TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
+	t2.doTest();
+	t2.cleanUpTestEnv();
 
 	TestPlayerCanMoveToEmpty t3(3, 3, "0\n***\n*  \n***", 1);
 	t3.doTest();
