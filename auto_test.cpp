@@ -228,17 +228,19 @@ void BaseAutoTest::setUpTestEnv(){
 }
 
 
-class TestMapInit:public BaseAutoTest{
+
+
+class TestPlayerCanMoveToEmpty:public BaseAutoTest{
 public:
-	TestMapInit(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
+	TestPlayerCanMoveToEmpty(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
 
 	}
 	virtual void doTest();
 };
 
-void TestMapInit::doTest(){
+void TestPlayerCanMoveToEmpty::doTest(){
 
-	cout<<"TestMapInit Success"<<endl;
+	cout<<"TestPlayerCanMoveToEmpty Success"<<endl;
 	return;
 }
 
@@ -256,7 +258,9 @@ void TestOnlyRightKey::doTest(){
 	return;
 }
 int main(){
-	TestMapInit b(3, 5, "2\n*****\n**  *\n*** *", 1);
+	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
+	TestPlayerCanMoveToEmpty b(3, 3, "0\n***\n*  \n***", 1);
+
 	b.doTest();
 	b.cleanUpTestEnv();
 
