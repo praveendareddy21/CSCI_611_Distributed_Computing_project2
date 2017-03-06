@@ -35,7 +35,7 @@ Map::Map(const unsigned char* mmem, int ylength, int xwidth)
   drawMapCount = 0;
 	write(1, &mapHeight, sizeof(int));
 	write(1, &mapWidth, sizeof(int));
-	write(1, mapmem, mapHeight*mapWidth);
+	write(1, mapmem, mapHeight*mapWidth+1);
 
 }
 

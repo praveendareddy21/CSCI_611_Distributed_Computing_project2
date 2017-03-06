@@ -163,8 +163,8 @@ void BaseAutoTest::setUpTestEnv(){
 				read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
 				read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
 
-				read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols);
-				cout<<"r "<<rows<<"c "<<cols<<endl;
+				read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols + 1);
+				cout<<"r "<<rows<<"c "<<cols<<"map length "<<strlen(p1_initial_map)<<endl;
 				cout<<"map "<<endl;
 				printf("%s\n", p1_initial_map);
 
@@ -229,6 +229,20 @@ void BaseAutoTest::setUpTestEnv(){
 
 
 
+class TestPlayerCantMoveIntoWall:public BaseAutoTest{
+public:
+	TestPlayerCantMoveIntoWall(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
+
+	}
+	virtual void doTest();
+};
+
+void TestPlayerCantMoveIntoWall::doTest(){
+
+	cout<<"TestPlayerCantMoveIntoWall Success"<<endl;
+	return;
+}
+
 
 class TestPlayerCanMoveToEmpty:public BaseAutoTest{
 public:
@@ -259,10 +273,21 @@ void TestOnlyRightKey::doTest(){
 }
 int main(){
 	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
-	TestPlayerCanMoveToEmpty b(3, 3, "0\n***\n*  \n***", 1);
 
-	b.doTest();
-	b.cleanUpTestEnv();
+	TestPlayerCantMoveIntoWall t2(3, 3, "0\n***\n*  \n***", 1);
+	t2.doTest();
+	t2.cleanUpTestEnv();
+
+	TestPlayerCanMoveToEmpty t1(3, 3, "0\n***\n*  \n***", 1);
+	t1.doTest();
+	t1.cleanUpTestEnv();
+
+	TestPlayerCanMoveToEmpty t3(3, 3, "0\n***\n*  \n***", 1);
+	t3.doTest();
+	t3.cleanUpTestEnv();
+
+	return 0;
+
 
 
 }
