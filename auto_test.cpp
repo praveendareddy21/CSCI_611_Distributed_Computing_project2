@@ -285,8 +285,54 @@ public:
 };
 
 void TestPlayerCanMoveToEmpty::doTest(){
+	bool test_result = false;
 
-	cout<<"TestPlayerCanMoveToEmpty Success"<<endl;
+	if(p1_initial_map[4] & G_PLR0){ // player on 4
+		char key = 'l';
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		char msgType,  map[rows*cols+1];
+		map[rows*cols] = '\0';
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+		if(p1_initial_map[5] & G_PLR0 && !(p1_initial_map[4] & G_PLR0))
+		{
+			test_result =  true;
+			cout<<"in 4"<<endl;
+		}
+
+	}
+	else if(p1_initial_map[5] & G_PLR0){ // player on 5
+		char key = 'h';
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		char msgType,  map[rows*cols+1];
+		map[rows*cols] = '\0';
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+		if(p1_initial_map[4] & G_PLR0 && !(p1_initial_map[5] & G_PLR0))
+		{
+			test_result =  true;
+			cout<<"in 5"<<endl;
+		}
+
+	}
+
+
+	char key = 'Q';
+	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+	if(test_result)
+		cout<<"TestPlayerCanMoveToEmpty Success"<<endl;
+	else
+		cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+
 	return;
 }
 
@@ -310,11 +356,13 @@ int main(){
 	t1.doTest();
 	t1.cleanUpTestEnv();
 
-	return 0;
+
 
 	TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
 	t2.doTest();
 	t2.cleanUpTestEnv();
+
+	return 0;
 
 	TestPlayerCanMoveToEmpty t3(3, 3, "0\n***\n*  \n***", 1);
 	t3.doTest();
