@@ -298,7 +298,7 @@ void TestPlayerCanMoveToEmpty::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
-		if(p1_initial_map[5] & G_PLR0 && !(p1_initial_map[4] & G_PLR0))
+		if(map[5] & G_PLR0 && !(map[4] & G_PLR0))
 		{
 			test_result =  true;
 			cout<<"in 4"<<endl;
@@ -316,7 +316,7 @@ void TestPlayerCanMoveToEmpty::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
-		if(p1_initial_map[4] & G_PLR0 && !(p1_initial_map[5] & G_PLR0))
+		if(map[4] & G_PLR0 && !(map[5] & G_PLR0))
 		{
 			test_result =  true;
 			cout<<"in 5"<<endl;
@@ -351,16 +351,21 @@ void TestOnlyRightKey::doTest(){
 }
 int main(){
 	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
-
 	TestPlayerCantMoveIntoWall t1(3, 3, "0\n***\n* *\n***", 1);
 	t1.doTest();
 	t1.cleanUpTestEnv();
 
 
+	return 0;
 
-	TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
-	t2.doTest();
-	t2.cleanUpTestEnv();
+
+
+
+		TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
+		t2.doTest();
+		t2.cleanUpTestEnv();
+
+
 
 	return 0;
 
