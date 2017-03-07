@@ -58,7 +58,7 @@ vector<vector< char > > readMapFromFile(char * mapFile, int &golds){
 int main(){
 
     char * file_name = "mymap_test.txt";
-    int fd1, golds, rows, cols, count =0;
+    int fd1, golds, rows, cols, count =0, keyInput = 0;
     char buf [100];
     vector<vector< char > > mapVector =readMapFromFile(file_name, golds) ;
 
@@ -77,10 +77,14 @@ int main(){
 
 
    Map gameMap(reinterpret_cast<const unsigned char*>(map_mem), rows, cols);
+   while(keyInput != 81){ // game loop  key Q
+	 keyInput = gameMap.getKey();
 
-	 gameMap.getKey();
+   if(keyInput == 81)
+   gameMap.postNotice("");
+   else
 	 gameMap.drawMap();
-
+ }
 
    /*
    gameMap.getKey();

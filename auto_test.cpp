@@ -244,7 +244,8 @@ public:
 
 void TestPlayerCantMoveIntoWall::doTest(){
 
-	write(p_to_c1[P_to_C1_WRITE_END],"l",1);
+	char key = 'l';
+	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
 
 	char msgType,  map[rows*cols+1];
 	map[rows*cols] = '\0';
@@ -255,6 +256,19 @@ void TestPlayerCantMoveIntoWall::doTest(){
 
 	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 			cout<<"map "<<map<<endl;
+
+	key = 'Q';
+	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+
+	read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+	read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+	read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+	read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
+			cout<<"map "<<map<<endl;
+
 
 	cout<<"TestPlayerCantMoveIntoWall Success"<<endl;
 	return;
