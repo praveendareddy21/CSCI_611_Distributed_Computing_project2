@@ -140,7 +140,8 @@ void BaseAutoTest::setUpTestEnv(){
 			dup2(c1_to_p[C1_to_P_WRITE_END], 1);
 			close(c1_to_p[C1_to_P_WRITE_END]);
 
-			execl("stub","",NULL);
+			//execl("stub","",NULL);
+			execl("test_main","",NULL);
 		}
 		else{ // parent process
 			child_1_pid = temp_pid;
@@ -171,7 +172,7 @@ void BaseAutoTest::setUpTestEnv(){
 				read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols + 1);
 				cout<<"r "<<rows<<"c "<<cols<<"map length "<<strlen(p1_initial_map)<<endl;
 				cout<<"map "<<endl;
-				printf("%s\n", p1_initial_map);
+				printf("map : %s\n", p1_initial_map);
 
 
 		}
@@ -260,17 +261,17 @@ void TestPlayerCantMoveIntoWall::doTest(){
 	key = 'Q';
 	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
 
+	bool all_equal = true;
+	for(int i=0; i < rows * cols; i++){
+		if(map[i] != p1_initial_map[i])
+			all_equal = false;
+	}
 
-	read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
-	read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
-	read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
-	read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+	if(all_equal)
+		cout<<"TestPlayerCantMoveIntoWall Success"<<endl;
+	else
+		cout<<"TestPlayerCantMoveIntoWall Success"<<endl;
 
-	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
-			cout<<"map "<<map<<endl;
-
-
-	cout<<"TestPlayerCantMoveIntoWall Success"<<endl;
 	return;
 }
 

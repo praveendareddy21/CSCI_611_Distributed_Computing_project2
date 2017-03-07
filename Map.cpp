@@ -33,8 +33,11 @@ Map::Map(const unsigned char* mmem, int ylength, int xwidth)
 {
   noticeCount = 0;
   drawMapCount = 0;
-	write(1, &mapHeight, sizeof(int));
-	write(1, &mapWidth, sizeof(int));
+  int rows, cols;
+  rows = ylength;
+  cols =  xwidth;
+	write(1, &rows, sizeof(int));
+	write(1, &cols, sizeof(int));
 	write(1, mapmem, mapHeight*mapWidth+1);
 
 }
