@@ -324,7 +324,7 @@ void TestPlayerCanMoveToEmpty::doTest(){
 
 	}
 
-
+	// Testing complete, sending Q to quit GoldChase game process
 	char key = 'Q';
 	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
 
@@ -336,40 +336,92 @@ void TestPlayerCanMoveToEmpty::doTest(){
 	return;
 }
 
-class TestOnlyRightKey:public BaseAutoTest{
+class TestSimlpleGamePlayWithGold:public BaseAutoTest{
 public:
-	TestOnlyRightKey(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
+	TestSimlpleGamePlayWithGold(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
 
 	}
 	virtual void doTest();
 };
 
-void TestOnlyRightKey::doTest(){
+void TestSimlpleGamePlayWithGold::doTest(){
+	bool test_result = false;
 
-	cout<<"TestOnlyRightKey Success"<<endl;
+	if(p1_initial_map[1] & G_PLR0){ // player on 1
+		char key = 'k'; // key for moving up
+		char msgType,  map[rows*cols+1];
+		map[rows*cols] = '\0';
+
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+		if( !(map[1] & G_PLR0 && p1_drawMapCount == 1) ) //
+		{
+			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+			return;
+		}
+
+
+	}
+	else if(p1_initial_map[4] & G_PLR0){ // player on 4
+		char key = 'j';  // key for moving down
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		char msgType,  map[rows*cols+1];
+		map[rows*cols] = '\0';
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+		if( !(map[1] & G_PLR0 && p1_drawMapCount == 1) ) //
+		{
+			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+			return;
+		}
+
+
+	}
+
+
+
+	// Testing complete, sending Q to quit GoldChase game process
+	char key = 'Q';
+	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+	if(test_result)
+		cout<<"TestPlayerCanMoveToEmpty Success"<<endl;
+	else
+		cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+
 	return;
 }
 int main(){
 	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
 
 
+	TestSimlpleGamePlayWithGold t3_4_5(2, 3, "0\n* *\n* *", 1);
+	t3_4_5.doTest();
+	t3_4_5.cleanUpTestEnv();
 
+	return 0;
 
 	TestPlayerCantMoveIntoWall t1(3, 3, "0\n***\n* *\n***", 1);
 	t1.doTest();
 	t1.cleanUpTestEnv();
 
-	TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
+	TestPlayerCanMoveToEmpty t2(3, 3, "1\n***\n*  \n***", 1);
 	t2.doTest();
 	t2.cleanUpTestEnv();
 
 	return 0;
 
-	TestPlayerCanMoveToEmpty t3(3, 3, "0\n***\n*  \n***", 1);
-	t3.doTest();
-	t3.cleanUpTestEnv();
 
-	return 0;
 
 
 
