@@ -375,7 +375,22 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
-		if(map[4] & G_PLR0 && p1_drawMapCount == 2 && map[4] & G_GOLD && p1_noticeCount == 1) //&& !(map[5] & G_PLR0))
+		if( !(map[4] & G_PLR0 && p1_drawMapCount == 2 && map[4] & G_GOLD && p1_noticeCount == 1)) //&& !(map[5] & G_PLR0))
+		{
+			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+			return;
+		}
+
+		key = 'j';
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
+
+		if(map[4] & G_PLR0 && p1_drawMapCount == 3  && p1_noticeCount == 2) //&& !(map[5] & G_PLR0))
 		{
 			test_result =  true;
 			cout<<"in 1"<<endl;
@@ -409,7 +424,21 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
-		if(map[1] & G_PLR0 && p1_drawMapCount == 2 && map[1] & G_GOLD && p1_noticeCount == 1) //&& !(map[5] & G_PLR0))
+		if( !(map[1] & G_PLR0 && p1_drawMapCount == 2 && map[1] & G_GOLD && p1_noticeCount == 1 )) //&& !(map[5] & G_PLR0))
+		{
+			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+			return;
+		}
+
+		key = 'k';
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
+		if(map[1] & G_PLR0 && p1_drawMapCount == 3  && p1_noticeCount == 2) //&& !(map[5] & G_PLR0))
 		{
 			test_result =  true;
 			cout<<"in 4"<<endl;
@@ -417,11 +446,6 @@ void TestSimlpleGamePlayWithGold::doTest(){
 
 	}
 
-
-
-	// Testing complete, sending Q to quit GoldChase game process
-	char key = 'Q';
-	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
 
 	if(test_result)
 		cout<<"TestPlayerCanMoveToEmpty Success"<<endl;
