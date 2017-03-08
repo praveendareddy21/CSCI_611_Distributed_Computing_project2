@@ -354,7 +354,6 @@ void TestSimlpleGamePlayWithGold::doTest(){
 
 		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
 
-
 		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
 		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
@@ -366,25 +365,52 @@ void TestSimlpleGamePlayWithGold::doTest(){
 			return;
 		}
 
+		key = 'j';
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+		if(map[4] & G_PLR0 && p1_drawMapCount == 2 ) //&& !(map[5] & G_PLR0))
+		{
+			test_result =  true;
+			cout<<"in 1"<<endl;
+		}
 
 	}
 	else if(p1_initial_map[4] & G_PLR0){ // player on 4
 		char key = 'j';  // key for moving down
-		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
-
 		char msgType,  map[rows*cols+1];
 		map[rows*cols] = '\0';
+
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
 		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
 		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
-		if( !(map[1] & G_PLR0 && p1_drawMapCount == 1) ) //
+		if( !(map[4] & G_PLR0 && p1_drawMapCount == 1) ) //
 		{
 			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
 			return;
 		}
 
+		key = 'k';
+		write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+		read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+		if(map[1] & G_PLR0 && p1_drawMapCount == 2 ) //&& !(map[5] & G_PLR0))
+		{
+			test_result =  true;
+			cout<<"in 4"<<endl;
+		}
 
 	}
 
