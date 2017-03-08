@@ -59,10 +59,10 @@ void Map::postNotice(const char* msg)
 
   char msgType = 'n';
 
-  write(1, &msgType, sizeof(char));
-  write(1, &noticeCount, sizeof(int));
-  write(1, &drawMapCount, sizeof(int));
-  write(1, mapmem, mapHeight*mapWidth);
+  //write(1, &msgType, sizeof(char));
+  //write(1, &noticeCount, sizeof(int));
+  //write(1, &drawMapCount, sizeof(int));
+  //write(1, mapmem, mapHeight*mapWidth);
 
 }
 
