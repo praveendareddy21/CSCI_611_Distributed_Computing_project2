@@ -358,6 +358,7 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
 		if( !(map[1] & G_PLR0 && p1_drawMapCount == 1) ) //
 		{
@@ -372,8 +373,9 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
-		if(map[4] & G_PLR0 && p1_drawMapCount == 2 ) //&& !(map[5] & G_PLR0))
+		if(map[4] & G_PLR0 && p1_drawMapCount == 2 && map[4] & G_GOLD && p1_noticeCount == 1) //&& !(map[5] & G_PLR0))
 		{
 			test_result =  true;
 			cout<<"in 1"<<endl;
@@ -391,6 +393,7 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
 		if( !(map[4] & G_PLR0 && p1_drawMapCount == 1) ) //
 		{
@@ -405,8 +408,8 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
-
-		if(map[1] & G_PLR0 && p1_drawMapCount == 2 ) //&& !(map[5] & G_PLR0))
+		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
+		if(map[1] & G_PLR0 && p1_drawMapCount == 2 && map[1] & G_GOLD && p1_noticeCount == 1) //&& !(map[5] & G_PLR0))
 		{
 			test_result =  true;
 			cout<<"in 4"<<endl;
@@ -431,7 +434,7 @@ int main(){
 	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
 
 
-	TestSimlpleGamePlayWithGold t3_4_5(2, 3, "0\n* *\n* *", 1);
+	TestSimlpleGamePlayWithGold t3_4_5(2, 3, "1\n* *\n* *", 1);
 	t3_4_5.doTest();
 	t3_4_5.cleanUpTestEnv();
 
@@ -441,7 +444,7 @@ int main(){
 	t1.doTest();
 	t1.cleanUpTestEnv();
 
-	TestPlayerCanMoveToEmpty t2(3, 3, "1\n***\n*  \n***", 1);
+	TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
 	t2.doTest();
 	t2.cleanUpTestEnv();
 
