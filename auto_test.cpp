@@ -192,7 +192,8 @@ void BaseAutoTest::setUpTestEnv(){
 					dup2(c2_to_p[C2_to_P_WRITE_END], 1);
 					close(c2_to_p[C2_to_P_WRITE_END]);
 
-					execl("stub","",NULL);
+					//execl("stub","",NULL);
+					execl("test_main","",NULL);
 				}
 
 
@@ -454,13 +455,56 @@ void TestSimlpleGamePlayWithGold::doTest(){
 
 	return;
 }
+
+class TestTwoPlayersOnMap:public BaseAutoTest{
+public:
+	TestTwoPlayersOnMap(int r, int c, string m, int ch):BaseAutoTest(r,c,m,ch){
+
+	}
+	virtual void doTest();
+};
+
+void TestTwoPlayersOnMap::doTest(){
+	bool test_result = false;
+	char key = 'l';
+	char msgType,  map[rows*cols+1];
+	map[rows*cols] = '\0';
+
+
+	/*
+	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+
+	read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
+	read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
+	read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
+	read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
+
+	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
+			cout<<"map "<<map<<endl; */
+
+	key = 'Q';
+	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
+
+	key = 'Q';
+	write(p_to_c2[P_to_C2_WRITE_END],&key,sizeof(char));
+
+
+	if(test_result)
+		cout<<"TestTwoPlayersOnMap Success"<<endl;
+	else
+		cout<<"TestTwoPlayersOnMap Failed"<<endl;
+
+	return;
+}
+
 int main(){
 	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
 
+	TestTwoPlayersOnMap t6_7(2, 3, "0\n* *\n* *", 2);
+	t6_7.doTest();
+	t6_7.cleanUpTestEnv();
 
-	TestSimlpleGamePlayWithGold t3_4_5(2, 3, "1\n* *\n* *", 1);
-	t3_4_5.doTest();
-	t3_4_5.cleanUpTestEnv();
 
 	return 0;
 
@@ -471,6 +515,10 @@ int main(){
 	TestPlayerCanMoveToEmpty t2(3, 3, "0\n***\n*  \n***", 1);
 	t2.doTest();
 	t2.cleanUpTestEnv();
+
+	TestSimlpleGamePlayWithGold t3_4_5(2, 3, "1\n* *\n* *", 1);
+	t3_4_5.doTest();
+	t3_4_5.cleanUpTestEnv();
 
 	return 0;
 
