@@ -212,17 +212,17 @@ void BaseAutoTest::setUpTestEnv(){
 			read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
 			read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols+1);
 
-			cout<<"in c1 r "<<rows<<"c "<<cols<<endl;
-			cout<<"map "<<endl;
-			printf("%s\n", p1_initial_map);
+			//cout<<"in c1 r "<<rows<<"c "<<cols<<endl;
+			//cout<<"map "<<endl;
+			//printf("%s\n", p1_initial_map);
 
 			read(c2_to_p[C2_to_P_READ_END],&rows, sizeof(int));
 			read(c2_to_p[C2_to_P_READ_END],&cols,sizeof(int));
 			read(c2_to_p[C2_to_P_READ_END],p2_initial_map,rows*cols+1);
 
-			cout<<"in c2  r "<<rows<<"c "<<cols<<endl;
-			cout<<"map "<<endl;
-			printf("%s\n", p2_initial_map);
+			//cout<<"in c2  r "<<rows<<"c "<<cols<<endl;
+			//cout<<"map "<<endl;
+			//printf("%s\n", p2_initial_map);
 		}
 
 
@@ -256,7 +256,6 @@ void TestPlayerCantMoveIntoWall::doTest(){
 	read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
 	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
-			cout<<"map "<<map<<endl;
 
 	key = 'Q';
 	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
@@ -548,14 +547,6 @@ void TestTwoPlayersOnMap::doTest(){
 }
 
 int main(){
-	//TestPlayerCanMoveToEmpty b(3, 5, "2\n*****\n**  *\n*** *", 1);
-
-	TestTwoPlayersOnMap t6_7(2, 3, "0\n* *\n* *", 2);
-	t6_7.doTest();
-	t6_7.cleanUpTestEnv();
-
-
-	return 0;
 
 	TestPlayerCantMoveIntoWall t1(3, 3, "0\n***\n* *\n***", 1);
 	t1.doTest();
@@ -569,10 +560,10 @@ int main(){
 	t3_4_5.doTest();
 	t3_4_5.cleanUpTestEnv();
 
+	TestTwoPlayersOnMap t6_7(2, 3, "0\n* *\n* *", 2);
+	t6_7.doTest();
+	t6_7.cleanUpTestEnv();
+
 	return 0;
-
-
-
-
 
 }
