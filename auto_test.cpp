@@ -210,17 +210,16 @@ void BaseAutoTest::setUpTestEnv(){
 
 			read(c1_to_p[C1_to_P_READ_END],&rows, sizeof(int));
 			read(c1_to_p[C1_to_P_READ_END],&cols,sizeof(int));
-			char map [rows* cols +1 ];
+			read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols+1);
 
-			read(c1_to_p[C1_to_P_READ_END],p1_initial_map,rows*cols);
 			cout<<"in c1 r "<<rows<<"c "<<cols<<endl;
 			cout<<"map "<<endl;
 			printf("%s\n", p1_initial_map);
 
 			read(c2_to_p[C2_to_P_READ_END],&rows, sizeof(int));
 			read(c2_to_p[C2_to_P_READ_END],&cols,sizeof(int));
+			read(c2_to_p[C2_to_P_READ_END],p2_initial_map,rows*cols+1);
 
-			read(c1_to_p[C1_to_P_READ_END],p2_initial_map,rows*cols);
 			cout<<"in c2  r "<<rows<<"c "<<cols<<endl;
 			cout<<"map "<<endl;
 			printf("%s\n", p2_initial_map);
@@ -484,6 +483,19 @@ void TestTwoPlayersOnMap::doTest(){
 			cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
 			if(map[4] & G_PLR0  && map[4] & G_PLR1 ){
+				test_result = false;
+			}
+
+			key = 'k';
+			write(p_to_c2[P_to_C2_WRITE_END],&key,sizeof(char));
+
+			read(c2_to_p[C2_to_P_READ_END],&msgType, sizeof(char));
+			read(c2_to_p[C2_to_P_READ_END],&p2_noticeCount, sizeof(int));
+			read(c2_to_p[C2_to_P_READ_END],&p2_drawMapCount,sizeof(int));
+			read(c2_to_p[C2_to_P_READ_END],map,rows*cols);
+			cout<<"msgtype : "<<msgType<<" notice : "<<p2_noticeCount<<" drawcont : "<<p2_drawMapCount<<endl;
+
+			if(map[4] & G_PLR0  && map[1] & G_PLR1 ){
 				test_result = true;
 			}
 
@@ -502,22 +514,23 @@ void TestTwoPlayersOnMap::doTest(){
 			cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
 			if(map[1] & G_PLR0  && map[1] & G_PLR1 ){
+				test_result = false;
+			}
+			key = 'j';
+			write(p_to_c2[P_to_C2_WRITE_END],&key,sizeof(char));
+
+			read(c2_to_p[C2_to_P_READ_END],&msgType, sizeof(char));
+			read(c2_to_p[C2_to_P_READ_END],&p2_noticeCount, sizeof(int));
+			read(c2_to_p[C2_to_P_READ_END],&p2_drawMapCount,sizeof(int));
+			read(c2_to_p[C2_to_P_READ_END],map,rows*cols);
+			cout<<"msgtype : "<<msgType<<" notice : "<<p2_noticeCount<<" drawcont : "<<p2_drawMapCount<<endl;
+
+			if(map[1] & G_PLR0  && map[4] & G_PLR1 ){
 				test_result = true;
 			}
 
 	}
 
-	/*
-	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
-
-
-	read(c1_to_p[C1_to_P_READ_END],&msgType, sizeof(char));
-	read(c1_to_p[C1_to_P_READ_END],&p1_noticeCount, sizeof(int));
-	read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
-	read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
-
-	cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
-			cout<<"map "<<map<<endl; */
 
 	key = 'Q';
 	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
