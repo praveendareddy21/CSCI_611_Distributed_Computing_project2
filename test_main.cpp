@@ -210,6 +210,7 @@ const char * performGoldCheck(mapboard * mbp, int currentPos, bool & thisPlayerF
   if(mp[currentPos] & G_GOLD)
     {
       thisPlayerFoundGold = true;
+      mp[currentPos] &= ~G_GOLD;
       return realGoldMessage;
     }
   else if(mp[currentPos] & G_FOOL)
@@ -267,7 +268,7 @@ int main(int argc, char *argv[])
   Map * gameMap = NULL;
   int rows, cols, goldCount, thisPlayer = 0, thisPlayerLoc= 0, keyInput = 0, currPlaying = -1;
   bool thisPlayerFoundGold = false , thisQuitGameloop = false;
-  char * mapFile = "mymap_test.txt";
+  char * mapFile = "mymap.txt";
   const char * notice;
   unsigned char * mp; //map pointer
   vector<vector< char > > mapVector;

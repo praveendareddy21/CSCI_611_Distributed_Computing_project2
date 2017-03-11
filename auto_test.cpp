@@ -110,7 +110,7 @@ void BaseAutoTest::cleanUpTestEnv(){
 		}
 		//exit(0);
 	}
-	cout<<"Cleaned up Test Environment"<<endl;
+	cout<<"Cleaned up Test Environment"<<endl<<	endl;
 }
 
 
@@ -149,7 +149,7 @@ void BaseAutoTest::setUpTestEnv(){
 
 			strcpy(mapfile_content, mapfile_cont.c_str() );
 
-			char * file_name = "mymap_test.txt";
+			char * file_name = "mymap.txt";
 
 			mkfifo(file_name, S_IRUSR | S_IWUSR);
 			int fd = open(file_name, O_WRONLY );
@@ -260,6 +260,8 @@ void TestPlayerCantMoveIntoWall::doTest(){
 	key = 'Q';
 	write(p_to_c1[P_to_C1_WRITE_END],&key,sizeof(char));
 
+
+	// check for map didn't change after attempting move into wall
 	bool all_equal = true;
 	for(int i=0; i < rows * cols; i++){
 		if(map[i] != p1_initial_map[i])
@@ -297,6 +299,7 @@ void TestPlayerCanMoveToEmpty::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
+		// check for Player moved to empty space on right
 		if(map[5] & G_PLR0 && p1_drawMapCount == 1) //&& !(map[4] & G_PLR0))
 		{
 			test_result =  true;
@@ -315,7 +318,8 @@ void TestPlayerCanMoveToEmpty::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 
-		if(map[4] & G_PLR0 && p1_drawMapCount == 1 ) //&& !(map[5] & G_PLR0))
+		// check for Player moved to empty space on left
+		if(map[4] & G_PLR0 && p1_drawMapCount == 1 ) //
 		{
 			test_result =  true;
 			cout<<"in 5"<<endl;
@@ -344,7 +348,9 @@ public:
 };
 
 void TestSimlpleGamePlayWithGold::doTest(){
-	bool test_result = false;
+	bool test_result_0 = false;
+	bool test_result_1 = false;
+	bool test_result_2 = false;
 
 	if(p1_initial_map[1] & G_PLR0){ // player on 1
 		char key = 'k'; // key for moving up
@@ -359,10 +365,11 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
-		if( !(map[1] & G_PLR0 && p1_drawMapCount == 1) ) //
+		//Player cannot leave map without gold
+		//drawMap has increased by 1
+		if( map[1] & G_PLR0 && p1_drawMapCount == 1 ) //
 		{
-			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
-			return;
+			test_result_0 = true;
 		}
 
 		key = 'j';
@@ -374,10 +381,13 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
-		if( !(map[4] & G_PLR0 && p1_drawMapCount == 2 && map[4] & G_GOLD && p1_noticeCount == 1)) //&& !(map[5] & G_PLR0))
+		// Player moved on to the Gold
+		//drawMap has increased by 1
+		// G_GOLD disappears
+		//notice has increased by 1
+		if( map[4] & G_PLR0 && p1_drawMapCount == 2 && !(map[4] & G_GOLD) && p1_noticeCount == 1)
 		{
-			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
-			return;
+			test_result_1 = true;
 		}
 
 		key = 'j';
@@ -389,9 +399,13 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
-		if(map[4] & G_PLR0 && p1_drawMapCount == 3  && p1_noticeCount == 2) //&& !(map[5] & G_PLR0))
+
+		//Player leaves map with gold
+		// G_GOLD disappears
+		// notice has increased by 1
+		if( p1_drawMapCount == 3 && !(map[4] & G_GOLD) && p1_noticeCount == 2) //&& !(map[5] & G_PLR0))
 		{
-			test_result =  true;
+			test_result_2 = true;
 			cout<<"in 1"<<endl;
 		}
 
@@ -409,10 +423,11 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
-		if( !(map[4] & G_PLR0 && p1_drawMapCount == 1) ) //
+		//Player cannot leave map without gold
+		//drawMap has increased by 1
+		if( map[4] & G_PLR0 && p1_drawMapCount == 1 ) //
 		{
-			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
-			return;
+				test_result_0 = true;
 		}
 
 		key = 'k';
@@ -423,10 +438,14 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
-		if( !(map[1] & G_PLR0 && p1_drawMapCount == 2 && map[1] & G_GOLD && p1_noticeCount == 1 )) //&& !(map[5] & G_PLR0))
+
+		// Player moved on to the Gold
+		//drawMap has increased by 1
+		// G_GOLD disappears
+		//notice has increased by 1
+		if( map[1] & G_PLR0 && p1_drawMapCount == 2 && !(map[1] & G_GOLD) && p1_noticeCount == 1 ) //&& !(map[5] & G_PLR0))
 		{
-			cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
-			return;
+				test_result_1 = true;
 		}
 
 		key = 'k';
@@ -437,19 +456,23 @@ void TestSimlpleGamePlayWithGold::doTest(){
 		read(c1_to_p[C1_to_P_READ_END],&p1_drawMapCount,sizeof(int));
 		read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 		cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
-		if(map[1] & G_PLR0 && p1_drawMapCount == 3  && p1_noticeCount == 2) //&& !(map[5] & G_PLR0))
+
+		//Player leaves map with gold
+		// G_GOLD disappears
+		// notice has increased by 1
+		if( p1_drawMapCount == 3 && !(map[4] & G_GOLD) && p1_noticeCount == 2) //&& !(map[5] & G_PLR0))
 		{
-			test_result =  true;
+			test_result_2 = true;
 			cout<<"in 4"<<endl;
 		}
 
 	}
 
 
-	if(test_result)
-		cout<<"TestPlayerCanMoveToEmpty Success"<<endl;
+	if(test_result_0 && test_result_1 && test_result_2 )
+		cout<<"TestSimlpleGamePlayWithGold Success"<<endl;
 	else
-		cout<<"TestPlayerCanMoveToEmpty Failed"<<endl;
+		cout<<"TestSimlpleGamePlayWithGold Failed"<<endl;
 
 	return;
 }
@@ -463,7 +486,8 @@ public:
 };
 
 void TestTwoPlayersOnMap::doTest(){
-	bool test_result = false;
+	bool test_result_0 = false;
+	bool test_result_1 = false;
 	char key = 'l';
 	char msgType,  map[rows*cols+1];
 	map[rows*cols] = '\0';
@@ -481,8 +505,9 @@ void TestTwoPlayersOnMap::doTest(){
 			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 			cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
+			//Change of map, both G_PLR0 & G_PLR1 bits set on a square
 			if(map[4] & G_PLR0  && map[4] & G_PLR1 ){
-				test_result = false;
+				test_result_0 = true;
 			}
 
 			key = 'k';
@@ -494,8 +519,9 @@ void TestTwoPlayersOnMap::doTest(){
 			read(c2_to_p[C2_to_P_READ_END],map,rows*cols);
 			cout<<"msgtype : "<<msgType<<" notice : "<<p2_noticeCount<<" drawcont : "<<p2_drawMapCount<<endl;
 
+			//Move off: Bits successfully separated onto two different squares
 			if(map[4] & G_PLR0  && map[1] & G_PLR1 ){
-				test_result = true;
+				test_result_1 = true;
 			}
 
 	}
@@ -512,8 +538,9 @@ void TestTwoPlayersOnMap::doTest(){
 			read(c1_to_p[C1_to_P_READ_END],map,rows*cols);
 			cout<<"msgtype : "<<msgType<<" notice : "<<p1_noticeCount<<" drawcont : "<<p1_drawMapCount<<endl;
 
+			//Change of map, both G_PLR0 & G_PLR1 bits set on a square
 			if(map[1] & G_PLR0  && map[1] & G_PLR1 ){
-				test_result = false;
+				test_result_0 = true;
 			}
 			key = 'j';
 			write(p_to_c2[P_to_C2_WRITE_END],&key,sizeof(char));
@@ -524,8 +551,9 @@ void TestTwoPlayersOnMap::doTest(){
 			read(c2_to_p[C2_to_P_READ_END],map,rows*cols);
 			cout<<"msgtype : "<<msgType<<" notice : "<<p2_noticeCount<<" drawcont : "<<p2_drawMapCount<<endl;
 
+			//Move off: Bits successfully separated onto two different squares
 			if(map[1] & G_PLR0  && map[4] & G_PLR1 ){
-				test_result = true;
+				test_result_1 = true;
 			}
 
 	}
@@ -538,7 +566,7 @@ void TestTwoPlayersOnMap::doTest(){
 	write(p_to_c2[P_to_C2_WRITE_END],&key,sizeof(char));
 
 
-	if(test_result)
+	if(test_result_0 && test_result_1)
 		cout<<"TestTwoPlayersOnMap Success"<<endl;
 	else
 		cout<<"TestTwoPlayersOnMap Failed"<<endl;
